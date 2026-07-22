@@ -40,18 +40,9 @@ export default function Navbar() {
       }`}
       style={{ borderBottom: scrolled ? '3px solid #1A1A1A' : 'none' }}
     >
-      <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <a
-          href="#hero"
-          className="font-anton text-2xl tracking-wider hover:text-red-brand transition-colors"
-          style={{ fontFamily: 'Anton, sans-serif', color: 'var(--clr-dark)' }}
-        >
-          S<span style={{ color: 'var(--clr-red)' }}>.</span>
-        </a>
-
-        {/* Desktop links */}
-        <ul className="hidden md:flex items-center gap-8" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+      <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-end md:justify-center relative">
+        {/* Desktop centered links */}
+        <ul className="hidden md:flex items-center gap-10" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
           {navLinks.map((link) => (
             <li key={link.href} className="relative">
               <a
@@ -74,35 +65,12 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* CTA */}
-        <a
-          href="mailto:rshreyash784@gmail.com"
-          className="hidden md:block text-xs font-bold uppercase tracking-widest px-4 py-2 transition-all duration-200"
-          style={{
-            border: '2px solid var(--clr-dark)',
-            background: 'var(--clr-dark)',
-            color: 'var(--clr-bg)',
-            boxShadow: '3px 3px 0px var(--clr-red)',
-            fontFamily: 'Space Grotesk, sans-serif',
-          }}
-          onMouseEnter={(e) => {
-            ;(e.currentTarget as HTMLElement).style.background = 'var(--clr-red)'
-            ;(e.currentTarget as HTMLElement).style.borderColor = 'var(--clr-red)'
-          }}
-          onMouseLeave={(e) => {
-            ;(e.currentTarget as HTMLElement).style.background = 'var(--clr-dark)'
-            ;(e.currentTarget as HTMLElement).style.borderColor = 'var(--clr-dark)'
-          }}
-        >
-          Hire Me
-        </a>
-
-        {/* Hamburger */}
+        {/* Mobile Hamburger toggle */}
         <button
           className="md:hidden flex flex-col gap-1.5 p-2"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
-          style={{ cursor: 'none' }}
+          style={{ cursor: 'pointer' }}
         >
           <span
             className="block w-6 h-0.5 transition-all duration-300"

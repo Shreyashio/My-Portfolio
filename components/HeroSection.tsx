@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 const roles = [
   'Frontend Developer',
@@ -51,122 +52,17 @@ function TypewriterText() {
   )
 }
 
-// Developer SVG doodle — stylized abstract dev figure
-function DoodleAvatar() {
-  const [drawn, setDrawn] = useState(false)
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDrawn(true), 3200)
-    return () => clearTimeout(timer)
-  }, [])
-
-  return (
-    <div className={`relative ${drawn ? 'idle-bob' : ''}`}>
-      <svg
-        width="320"
-        height="380"
-        viewBox="0 0 320 380"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-label="Shreyash developer doodle"
-        role="img"
-      >
-        {/* Body outline */}
-        <path
-          d="M160 60 C 200 60, 230 90, 230 130 C 230 170, 200 200, 160 200 C 120 200, 90 170, 90 130 C 90 90, 120 60, 160 60 Z"
-          stroke="#A90E02"
-          strokeWidth="3"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="doodle-path"
-          style={{ animationDelay: '0s', animationDuration: '1.5s' }}
-        />
-        {/* Eyes */}
-        <circle
-          cx="140"
-          cy="120"
-          r="8"
-          stroke="#A90E02"
-          strokeWidth="2.5"
-          fill="none"
-          className="doodle-path"
-          style={{ animationDelay: '0.5s', animationDuration: '0.5s' }}
-        />
-        <circle
-          cx="180"
-          cy="120"
-          r="8"
-          stroke="#A90E02"
-          strokeWidth="2.5"
-          fill="none"
-          className="doodle-path"
-          style={{ animationDelay: '0.5s', animationDuration: '0.5s' }}
-        />
-        {/* Pupils */}
-        <circle cx="142" cy="122" r="3" fill="#A90E02" className="doodle-path" style={{ animationDelay: '0.8s', animationDuration: '0.3s' }} />
-        <circle cx="182" cy="122" r="3" fill="#A90E02" className="doodle-path" style={{ animationDelay: '0.8s', animationDuration: '0.3s' }} />
-        {/* Smile */}
-        <path
-          d="M 140 155 Q 160 175 180 155"
-          stroke="#A90E02"
-          strokeWidth="2.5"
-          fill="none"
-          strokeLinecap="round"
-          className="doodle-path"
-          style={{ animationDelay: '1s', animationDuration: '0.5s' }}
-        />
-        {/* Headphones */}
-        <path
-          d="M 92 120 Q 92 55, 160 55 Q 228 55, 228 120"
-          stroke="#1A1A1A"
-          strokeWidth="3"
-          fill="none"
-          strokeLinecap="round"
-          className="doodle-path"
-          style={{ animationDelay: '0.2s', animationDuration: '0.8s' }}
-        />
-        <rect x="80" y="108" width="16" height="26" rx="6" stroke="#1A1A1A" strokeWidth="2.5" fill="none" className="doodle-path" style={{ animationDelay: '0.9s', animationDuration: '0.4s' }} />
-        <rect x="224" y="108" width="16" height="26" rx="6" stroke="#1A1A1A" strokeWidth="2.5" fill="none" className="doodle-path" style={{ animationDelay: '0.9s', animationDuration: '0.4s' }} />
-
-        {/* Shoulders / torso */}
-        <path
-          d="M 90 200 L 60 240 L 60 310 L 260 310 L 260 240 L 230 200"
-          stroke="#1A1A1A"
-          strokeWidth="3"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="doodle-path"
-          style={{ animationDelay: '1.3s', animationDuration: '0.8s' }}
-        />
-        {/* Hoodie pocket */}
-        <path
-          d="M 120 270 L 120 300 L 200 300 L 200 270 Q 160 260 120 270 Z"
-          stroke="#1A1A1A"
-          strokeWidth="2.5"
-          fill="none"
-          className="doodle-path"
-          style={{ animationDelay: '1.8s', animationDuration: '0.5s' }}
-        />
-        {/* Laptop in hands */}
-        <rect x="70" y="295" width="180" height="12" rx="2" stroke="#A90E02" strokeWidth="2.5" fill="none" className="doodle-path" style={{ animationDelay: '2s', animationDuration: '0.5s' }} />
-        <rect x="85" y="235" width="150" height="60" rx="3" stroke="#A90E02" strokeWidth="2" fill="none" className="doodle-path" style={{ animationDelay: '2.2s', animationDuration: '0.5s' }} />
-        {/* Code lines on screen */}
-        <path d="M 100 248 L 140 248" stroke="#A90E02" strokeWidth="1.5" strokeLinecap="round" className="doodle-path" style={{ animationDelay: '2.4s', animationDuration: '0.2s' }} />
-        <path d="M 100 258 L 160 258" stroke="#A90E02" strokeWidth="1.5" strokeLinecap="round" className="doodle-path" style={{ animationDelay: '2.5s', animationDuration: '0.2s' }} />
-        <path d="M 100 268 L 130 268" stroke="#A90E02" strokeWidth="1.5" strokeLinecap="round" className="doodle-path" style={{ animationDelay: '2.6s', animationDuration: '0.2s' }} />
-        <path d="M 100 278 L 155 278" stroke="#A90E02" strokeWidth="1.5" strokeLinecap="round" className="doodle-path" style={{ animationDelay: '2.7s', animationDuration: '0.2s' }} />
-        {/* Stars / sparkles */}
-        <text x="250" y="90" fontSize="18" fill="#A90E02" className="doodle-path" style={{ animationDelay: '2.8s', animationDuration: '0.3s' }}>✦</text>
-        <text x="30" y="170" fontSize="12" fill="#1A1A1A" className="doodle-path" style={{ animationDelay: '2.9s', animationDuration: '0.2s' }}>✦</text>
-        <text x="270" y="210" fontSize="10" fill="#A90E02" className="doodle-path" style={{ animationDelay: '3s', animationDuration: '0.2s' }}>✦</text>
-      </svg>
-    </div>
-  )
-}
-
 export default function HeroSection() {
+  const handleHireClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    // Trigger direct mailto and scroll to contact section
+    window.location.href = 'mailto:rshreyash784@gmail.com?subject=Hiring%20Shreyash'
+    const contactEl = document.getElementById('contact')
+    if (contactEl) {
+      contactEl.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <section
       id="hero"
@@ -208,7 +104,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, x: -60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex flex-col gap-6"
+            className="flex flex-col gap-5"
           >
             {/* Status badge */}
             <motion.div
@@ -226,20 +122,38 @@ export default function HeroSection() {
                 className="w-2 h-2 rounded-full animate-pulse"
                 style={{ background: '#22c55e' }}
               />
-              Open to opportunities & collabs
+              Open to opportunities &amp; collabs
             </motion.div>
 
-            {/* Main headline */}
-            <h1
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-none uppercase whitespace-nowrap"
-              style={{
-                fontFamily: 'Anton, sans-serif',
-                color: 'var(--clr-dark)',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              SHREY<span style={{ color: 'var(--clr-red)' }}>ASH</span><span style={{ color: 'var(--clr-red)' }}>.</span>
-            </h1>
+            {/* Main headline: SHREYASHio & @Hashrey_ */}
+            <div>
+              <h1
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-none uppercase tracking-tighter"
+                style={{
+                  fontFamily: 'Anton, sans-serif',
+                  color: 'var(--clr-dark)',
+                }}
+              >
+                SHREY<span style={{ color: 'var(--clr-red)' }}>ASH</span>
+                <span
+                  style={{ color: 'var(--clr-red)' }}
+                  className="lowercase text-4xl sm:text-5xl md:text-6xl lg:text-7xl align-baseline ml-1"
+                >
+                  io
+                </span>
+              </h1>
+
+              {/* Sub-handle: @Hashrey_ */}
+              <div
+                className="text-lg sm:text-xl md:text-2xl font-bold tracking-widest uppercase mt-1"
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  color: 'var(--clr-red)',
+                }}
+              >
+                @Hashrey_
+              </div>
+            </div>
 
             {/* Typewriter role */}
             <div
@@ -285,6 +199,35 @@ export default function HeroSection() {
               >
                 View My Work ↓
               </a>
+
+              {/* Hire Me CTA button */}
+              <button
+                onClick={handleHireClick}
+                className="px-6 py-3 font-bold uppercase text-sm tracking-widest transition-all duration-200"
+                style={{
+                  background: 'var(--clr-dark)',
+                  color: 'var(--clr-bg)',
+                  border: '3px solid var(--clr-dark)',
+                  boxShadow: '5px 5px 0px var(--clr-red)',
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  ;(e.currentTarget as HTMLElement).style.background = 'var(--clr-red)'
+                  ;(e.currentTarget as HTMLElement).style.borderColor = 'var(--clr-red)'
+                  ;(e.currentTarget as HTMLElement).style.transform = 'translate(-2px, -2px)'
+                  ;(e.currentTarget as HTMLElement).style.boxShadow = '7px 7px 0px var(--clr-dark)'
+                }}
+                onMouseLeave={(e) => {
+                  ;(e.currentTarget as HTMLElement).style.background = 'var(--clr-dark)'
+                  ;(e.currentTarget as HTMLElement).style.borderColor = 'var(--clr-dark)'
+                  ;(e.currentTarget as HTMLElement).style.transform = 'translate(0px, 0px)'
+                  ;(e.currentTarget as HTMLElement).style.boxShadow = '5px 5px 0px var(--clr-red)'
+                }}
+              >
+                Hire Me ✉
+              </button>
+
               <a
                 href="#contact"
                 className="px-6 py-3 font-bold uppercase text-sm tracking-widest transition-all duration-200"
@@ -316,7 +259,7 @@ export default function HeroSection() {
             <motion.div
               animate={{ y: [0, 10, 0] }}
               transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-              className="mt-8 flex items-center gap-3"
+              className="mt-6 flex items-center gap-3"
               aria-hidden="true"
             >
               <div
@@ -332,43 +275,70 @@ export default function HeroSection() {
             </motion.div>
           </motion.div>
 
-          {/* Right — Doodle */}
+          {/* Right — Matrix Code Developer Image in Brutalist Frame */}
           <motion.div
             initial={{ opacity: 0, x: 60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex justify-center items-center"
           >
-            {/* Brutalist frame */}
+            {/* Brutalist frame with Matrix Image */}
             <div
-              className="relative p-6"
+              className="relative p-3 group transition-transform duration-300 hover:-translate-y-1"
               style={{
                 border: '3px solid var(--clr-dark)',
-                background: 'var(--clr-bg)',
+                background: '#000',
                 boxShadow: '10px 10px 0px var(--clr-red)',
               }}
             >
               {/* Corner tag */}
               <div
-                className="absolute -top-4 -left-4 px-2 py-1 text-xs font-bold uppercase tracking-widest z-10"
+                className="absolute -top-4 -left-4 px-3 py-1 text-xs font-bold uppercase tracking-widest z-20"
                 style={{
                   background: 'var(--clr-red)',
                   color: '#fff',
                   fontFamily: 'Space Grotesk, sans-serif',
+                  boxShadow: '2px 2px 0px var(--clr-dark)',
                 }}
               >
                 #01
               </div>
-              {/* Halftone bg inside frame */}
-              <div
-                className="absolute inset-0 opacity-5"
-                style={{
-                  backgroundImage: 'radial-gradient(circle, #1A1A1A 1px, transparent 1px)',
-                  backgroundSize: '10px 10px',
-                }}
-                aria-hidden="true"
-              />
-              <DoodleAvatar />
+
+              {/* Developer matrix photo */}
+              <div className="relative w-[300px] sm:w-[340px] h-[380px] sm:h-[420px] overflow-hidden border-2 border-dark">
+                <Image
+                  src="/avatar.jpg"
+                  alt="Shreyash @Hashrey_ Avatar"
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 300px, 340px"
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                />
+
+                {/* Subtle brutalist grid overlay on image */}
+                <div
+                  className="absolute inset-0 pointer-events-none opacity-20"
+                  style={{
+                    backgroundImage: 'linear-gradient(var(--clr-red) 1px, transparent 1px), linear-gradient(90deg, var(--clr-red) 1px, transparent 1px)',
+                    backgroundSize: '24px 24px',
+                  }}
+                />
+              </div>
+
+              {/* Caption badge underneath image inside frame */}
+              <div className="mt-2 pt-2 border-t border-dark/40 flex items-center justify-between px-1">
+                <span
+                  className="text-xs font-bold uppercase tracking-wider"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--clr-red)' }}
+                >
+                  Shreyash Raut
+                </span>
+                <span
+                  className="text-[10px] font-mono uppercase tracking-widest text-white/70"
+                >
+                  @Hashrey_
+                </span>
+              </div>
             </div>
           </motion.div>
         </div>

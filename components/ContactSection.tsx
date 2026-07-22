@@ -4,8 +4,6 @@ import { useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 
 const EMAIL = 'rshreyash784@gmail.com'
-// Contact opens user's default email client — no backend needed
-const MAILTO_SUBJECT = encodeURIComponent('Hey Shreyash — Let\'s Connect!')
 
 const socials = [
   {
@@ -45,6 +43,7 @@ type FormStatus = 'idle' | 'loading' | 'success' | 'error'
 export default function ContactSection() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [status, setStatus] = useState<FormStatus>('idle')
+  const [copied, setCopied] = useState(false)
   const sectionRef = useRef<HTMLDivElement>(null)
   const inView = useInView(sectionRef, { once: true, margin: '-100px' })
 
@@ -52,17 +51,28 @@ export default function ContactSection() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(EMAIL)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus('loading')
-    // Build mailto: link — opens user's default email client
-    const body = encodeURIComponent(
-      `Name: ${form.name}\nFrom: ${form.email}\n\n${form.message}`
-    )
-    const mailtoLink = `mailto:${EMAIL}?subject=${MAILTO_SUBJECT}&body=${body}`
-    window.open(mailtoLink, '_blank')
-    setStatus('success')
-    setForm({ name: '', email: '', message: '' })
+
+    const subject = encodeURIComponent(`Portfolio Message from ${form.name}`)
+    const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\nMessage:\n${form.message}`)
+    const mailtoUrl = `mailto:${EMAIL}?subject=${subject}&body=${body}`
+
+    try {
+      // Direct window location trigger to open user's default email composer
+      window.location.href = mailtoUrl
+      setStatus('success')
+      setForm({ name: '', email: '', message: '' })
+    } catch {
+      setStatus('error')
+    }
   }
 
   const inputStyle: React.CSSProperties = {
@@ -78,7 +88,6 @@ export default function ContactSection() {
     color: 'var(--clr-dark)',
     outline: 'none',
     transition: 'border-color 0.2s',
-    cursor: 'none',
   }
 
   return (
@@ -123,20 +132,31 @@ export default function ContactSection() {
               Drop a message.
             </p>
 
-            {/* Direct email */}
-            <a
-              href={`mailto:${EMAIL}`}
-              className="block text-lg font-bold mb-8 break-all transition-colors hover:text-red-brand"
-              style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--clr-dark)' }}
-              onMouseEnter={(e) => {
-                ;(e.currentTarget as HTMLElement).style.color = 'var(--clr-red)'
-              }}
-              onMouseLeave={(e) => {
-                ;(e.currentTarget as HTMLElement).style.color = 'var(--clr-dark)'
-              }}
-            >
-              {EMAIL} ↗
-            </a>
+            {/* Direct email card with copy functionality */}
+            <div className="mb-8 flex flex-wrap items-center gap-3">
+              <a
+                href={`mailto:${EMAIL}`}
+                className="text-lg font-bold break-all transition-colors hover:text-red-brand"
+                style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--clr-dark)' }}
+              >
+                {EMAIL} ↗
+              </a>
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                className="text-xs font-bold uppercase tracking-widest px-3 py-1.5 transition-all duration-200"
+                style={{
+                  border: '2px solid var(--clr-dark)',
+                  background: copied ? '#22c55e' : 'var(--clr-dark)',
+                  color: 'var(--clr-bg)',
+                  boxShadow: '2px 2px 0px var(--clr-red)',
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  cursor: 'pointer',
+                }}
+              >
+                {copied ? '✓ Copied!' : 'Copy Email'}
+              </button>
+            </div>
 
             {/* Social icons */}
             <div className="flex gap-4">
@@ -182,7 +202,7 @@ export default function ContactSection() {
               }}
             >
               <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#22c55e' }} />
-              🟢 Open to opportunities & collaborations
+              🟢 Open to opportunities &amp; collaborations
             </div>
           </motion.div>
 
@@ -293,7 +313,6 @@ export default function ContactSection() {
               <button
                 id="contact-submit"
                 type="submit"
-                disabled={status === 'loading' || status === 'success'}
                 className="w-full py-4 font-bold uppercase text-sm tracking-widest transition-all duration-200"
                 style={{
                   background:
@@ -302,7 +321,7 @@ export default function ContactSection() {
                   border: '3px solid var(--clr-dark)',
                   fontFamily: 'Space Grotesk, sans-serif',
                   boxShadow: '4px 4px 0px var(--clr-dark)',
-                  cursor: status === 'loading' ? 'wait' : 'none',
+                  cursor: status === 'loading' ? 'wait' : 'pointer',
                   opacity: status === 'loading' ? 0.7 : 1,
                 }}
                 onMouseEnter={(e) => {
@@ -315,20 +334,20 @@ export default function ContactSection() {
                 }}
               >
                 {status === 'loading'
-                  ? 'Sending...'
+                  ? 'Opening Email App...'
                   : status === 'success'
-                  ? '✓ Message Sent!'
+                  ? '✓ Email Composer Opened!'
                   : status === 'error'
                   ? 'Error — Try Again'
                   : 'Send Message →'}
               </button>
 
-              {status === 'error' && (
+              {status === 'success' && (
                 <p
-                  className="text-sm text-center"
-                  style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--clr-red)' }}
+                  className="text-xs text-center font-semibold"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#22c55e' }}
                 >
-                  Something went wrong. Email me directly at {EMAIL}
+                  Message prepared! If your email app didn&apos;t open automatically, click &quot;Copy Email&quot; above to message {EMAIL}.
                 </p>
               )}
             </form>
