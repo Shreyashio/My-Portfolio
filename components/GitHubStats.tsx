@@ -12,13 +12,6 @@ interface Stat {
   icon: string
 }
 
-const stats: Stat[] = [
-  { label: 'Total Commits', value: 280, suffix: '+', icon: '⌨️' },
-  { label: 'Repositories', value: 24, suffix: '+', icon: '📁' },
-  { label: 'Current Streak', value: 12, suffix: ' days', icon: '🔥' },
-  { label: 'Followers', value: 18, suffix: '+', icon: '👥' },
-]
-
 function CountUpNumber({ target, suffix }: { target: number; suffix: string }) {
   const [count, setCount] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
@@ -27,8 +20,8 @@ function CountUpNumber({ target, suffix }: { target: number; suffix: string }) {
   useEffect(() => {
     if (!inView) return
     let start = 0
-    const duration = 1800
-    const step = Math.ceil(target / (duration / 16))
+    const duration = 1600
+    const step = Math.max(1, Math.ceil(target / (duration / 16)))
     const timer = setInterval(() => {
       start += step
       if (start >= target) {
@@ -65,7 +58,7 @@ function StatCell({ stat, delay }: { stat: Stat; delay: number }) {
         background: 'var(--clr-bg)',
         boxShadow: '5px 5px 0px var(--clr-dark)',
         minHeight: '140px',
-        cursor: 'none',
+        cursor: 'pointer',
       }}
       onMouseEnter={(e) => {
         ;(e.currentTarget as HTMLElement).style.boxShadow = '5px 5px 0px var(--clr-red)'
@@ -75,7 +68,6 @@ function StatCell({ stat, delay }: { stat: Stat; delay: number }) {
         ;(e.currentTarget as HTMLElement).style.boxShadow = '5px 5px 0px var(--clr-dark)'
         ;(e.currentTarget as HTMLElement).style.transform = 'translate(0, 0)'
       }}
-      data-cursor-hover
     >
       <span className="text-3xl">{stat.icon}</span>
       <div>
@@ -99,6 +91,55 @@ function StatCell({ stat, delay }: { stat: Stat; delay: number }) {
 export default function GitHubStats() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const inView = useInView(sectionRef, { once: true, margin: '-80px' })
+
+  // Dynamic live stats fetched directly from GitHub APIs on page load
+  const [stats, setStats] = useState<Stat[]>([
+    { label: 'Total Commits', value: 280, suffix: '+', icon: '⌨️' },
+    { label: 'Repositories', value: 24, suffix: '', icon: '📁' },
+    { label: 'Current Streak', value: 12, suffix: ' days', icon: '🔥' },
+    { label: 'Followers', value: 9, suffix: '', icon: '👥' },
+  ])
+
+  useEffect(() => {
+    // 1. Fetch live GitHub User profile (Repos & Followers)
+    fetch(`https://api.github.com/users/${GITHUB_USERNAME}`)
+      .then((res) => res.json())
+      .then((user) => {
+        if (user && user.public_repos !== undefined) {
+          setStats((prev) =>
+            prev.map((s) => {
+              if (s.label === 'Repositories') return { ...s, value: user.public_repos }
+              if (s.label === 'Followers') return { ...s, value: user.followers }
+              return s
+            })
+          )
+        }
+      })
+      .catch(() => {})
+
+    // 2. Fetch live GitHub Streak & Contribution stats
+    fetch(`https://streak-stats.demolab.com/?user=${GITHUB_USERNAME}&type=json`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data) {
+          const currentStreak = data.currentStreak?.length
+          const totalContributions = data.totalContributions?.count
+
+          setStats((prev) =>
+            prev.map((s) => {
+              if (s.label === 'Current Streak' && currentStreak !== undefined) {
+                return { ...s, value: currentStreak }
+              }
+              if (s.label === 'Total Commits' && totalContributions !== undefined) {
+                return { ...s, value: totalContributions, suffix: '+' }
+              }
+              return s
+            })
+          )
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   return (
     <section
@@ -151,10 +192,14 @@ export default function GitHubStats() {
             }}
           >
             <p
-              className="text-xs uppercase tracking-widest font-bold mb-4"
+              className="text-xs uppercase tracking-widest font-bold mb-4 flex items-center justify-between"
               style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#888' }}
             >
-              Contribution Activity
+              <span>Contribution Activity</span>
+              <span className="text-[10px] text-emerald-600 font-mono flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Live Sync
+              </span>
             </p>
 
             {/* GitHub contribution graph */}
@@ -167,11 +212,11 @@ export default function GitHubStats() {
               loading="lazy"
             />
 
-            {/* Streak stats embed */}
+            {/* Live Streak stats embed */}
             <div className="mt-6">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={`https://github-readme-streak-stats.herokuapp.com/?user=${GITHUB_USERNAME}&theme=transparent&hide_border=true&ring=A90E02&fire=A90E02&currStreakLabel=A90E02&sideLabels=1A1A1A&currStreakNum=1A1A1A&sideNums=1A1A1A&dates=888888&background=FFFBD4`}
+                src={`https://streak-stats.demolab.com/?user=${GITHUB_USERNAME}&theme=transparent&hide_border=true&ring=A90E02&fire=A90E02&currStreakLabel=A90E02&sideLabels=1A1A1A&currStreakNum=1A1A1A&sideNums=1A1A1A&dates=888888&background=FFFBD4`}
                 alt={`${GITHUB_USERNAME}'s GitHub streak stats`}
                 className="w-full h-auto"
                 loading="lazy"
@@ -179,7 +224,7 @@ export default function GitHubStats() {
             </div>
           </motion.div>
 
-          {/* Stat tiles — right column */}
+          {/* Stat tiles — right column with live dynamic values */}
           <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
             {stats.map((stat, i) => (
               <StatCell key={stat.label} stat={stat} delay={i * 0.1 + 0.3} />
