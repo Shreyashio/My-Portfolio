@@ -36,38 +36,68 @@ export default function Navbar() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-chiffon border-b-3 border-dark shadow-sm' : 'bg-transparent'
+        scrolled ? 'bg-chiffon border-b-3 border-dark shadow-sm py-3' : 'bg-transparent py-5'
       }`}
       style={{ borderBottom: scrolled ? '3px solid #1A1A1A' : 'none' }}
     >
-      <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-end md:justify-center relative">
-        {/* Desktop centered links */}
-        <ul className="hidden md:flex items-center gap-10" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-          {navLinks.map((link) => (
-            <li key={link.href} className="relative">
-              <a
-                href={link.href}
-                className="text-sm font-semibold uppercase tracking-widest transition-colors hover:text-red-brand"
+      <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between min-h-[40px] relative">
+        {/* Left side: @Hashrey_ slides in from the left on scroll */}
+        <div className="flex items-center min-w-[140px]">
+          <AnimatePresence>
+            {scrolled && (
+              <motion.a
+                href="#hero"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="font-bold text-lg md:text-xl tracking-wider transition-colors hover:opacity-80"
                 style={{
-                  color: active === link.href.slice(1) ? 'var(--clr-red)' : 'var(--clr-dark)',
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  color: 'var(--clr-red)',
                 }}
               >
-                {link.label}
-                {active === link.href.slice(1) && (
-                  <motion.div
-                    layoutId="nav-underline"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5"
-                    style={{ background: 'var(--clr-red)' }}
-                  />
-                )}
-              </a>
-            </li>
-          ))}
-        </ul>
+                @Hashrey_
+              </motion.a>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Desktop links container: centered at first, slides smoothly to the right on scroll */}
+        <motion.div
+          layout
+          transition={{ type: 'spring', stiffness: 200, damping: 24 }}
+          className={`hidden md:flex items-center ${
+            scrolled ? 'ml-auto' : 'mx-auto'
+          }`}
+        >
+          <ul className="flex items-center gap-8" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+            {navLinks.map((link) => (
+              <li key={link.href} className="relative">
+                <a
+                  href={link.href}
+                  className="text-sm font-semibold uppercase tracking-widest transition-colors hover:text-red-brand"
+                  style={{
+                    color: active === link.href.slice(1) ? 'var(--clr-red)' : 'var(--clr-dark)',
+                  }}
+                >
+                  {link.label}
+                  {active === link.href.slice(1) && (
+                    <motion.div
+                      layoutId="nav-underline"
+                      className="absolute -bottom-1 left-0 right-0 h-0.5"
+                      style={{ background: 'var(--clr-red)' }}
+                    />
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
 
         {/* Mobile Hamburger toggle */}
         <button
-          className="md:hidden flex flex-col gap-1.5 p-2"
+          className="md:hidden flex flex-col gap-1.5 p-2 ml-auto"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
           style={{ cursor: 'pointer' }}

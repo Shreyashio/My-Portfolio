@@ -53,6 +53,16 @@ function TypewriterText() {
 }
 
 export default function HeroSection() {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   const handleHireClick = (e: React.MouseEvent) => {
     e.preventDefault()
     // Trigger direct mailto and scroll to contact section
@@ -143,16 +153,21 @@ export default function HeroSection() {
                 </span>
               </h1>
 
-              {/* Sub-handle: @Hashrey_ */}
-              <div
-                className="text-lg sm:text-xl md:text-2xl font-bold tracking-widest uppercase mt-1"
+              {/* Sub-handle: @Hashrey_ — fades out & slides up on scroll as it transitions into navbar */}
+              <motion.div
+                animate={{
+                  opacity: scrolled ? 0 : 1,
+                  y: scrolled ? -20 : 0,
+                }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="text-lg sm:text-xl md:text-2xl font-bold tracking-widest uppercase mt-1 inline-block"
                 style={{
                   fontFamily: 'Space Grotesk, sans-serif',
                   color: 'var(--clr-red)',
                 }}
               >
                 @Hashrey_
-              </div>
+              </motion.div>
             </div>
 
             {/* Typewriter role */}

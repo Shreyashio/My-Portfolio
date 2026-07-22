@@ -19,7 +19,7 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
     // Wrapper: NOT a motion.div with layout — that breaks preserve-3d
     <div
       style={{
-        height: '300px',
+        height: '360px',
         perspective: '1200px',
       }}
     >
@@ -49,7 +49,7 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            cursor: 'none',
+            cursor: 'pointer',
             transition: 'box-shadow 0.2s, transform 0.2s',
           }}
           onMouseEnter={(e) => {
@@ -81,47 +81,75 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
           />
 
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+            {/* Header badges without emoji icons */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <span
+                style={{
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                  padding: '3px 8px',
+                  border: '1.5px solid var(--clr-red)',
+                  color: 'var(--clr-red)',
+                  fontFamily: 'Space Grotesk, sans-serif',
+                }}
+              >
+                {project.category === 'full-stack' ? 'Full-Stack' : project.category === 'blockchain' ? 'Blockchain' : 'AI/ML'}
+              </span>
+
+              {project.hackathon && (
                 <span
                   style={{
-                    fontSize: '0.65rem',
+                    fontSize: '0.7rem',
                     fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.1em',
-                    padding: '2px 6px',
-                    border: '1.5px solid var(--clr-red)',
-                    color: 'var(--clr-red)',
+                    color: 'var(--clr-dark)',
+                    background: '#fde047',
+                    padding: '2px 8px',
+                    border: '1.5px solid var(--clr-dark)',
+                    boxShadow: '2px 2px 0px #000',
                     fontFamily: 'Space Grotesk, sans-serif',
                   }}
                 >
-                  {project.category === 'full-stack' ? 'Full-Stack' : project.category === 'blockchain' ? 'Blockchain' : 'AI/ML'}
+                  {project.hackathon}
                 </span>
-                {project.hackathon && (
-                  <span style={{ fontSize: '0.7rem', color: '#888', fontFamily: 'Space Grotesk, sans-serif' }}>
-                    {project.hackathon}
-                  </span>
-                )}
-              </div>
+              )}
             </div>
+
             <h3
               style={{
                 fontFamily: 'Anton, sans-serif',
-                fontSize: '2rem',
+                fontSize: '2.2rem',
                 textTransform: 'uppercase',
                 color: 'var(--clr-dark)',
                 lineHeight: 1.1,
+                marginBottom: '12px',
               }}
             >
               {project.name}
             </h3>
+
+            <p
+              style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: '0.85rem',
+                color: '#555',
+                lineHeight: 1.5,
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}
+            >
+              {project.description}
+            </p>
           </div>
 
-          <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#888', fontFamily: 'Space Grotesk, sans-serif' }}>
+          <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+            <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, color: 'var(--clr-dark)', fontFamily: 'Space Grotesk, sans-serif' }}>
               Click to flip ↻
             </span>
-            <div style={{ width: '32px', height: '32px', border: '2px solid var(--clr-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '32px', height: '32px', border: '2px solid var(--clr-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--clr-bg)' }}>
               <span style={{ color: 'var(--clr-red)', fontSize: '16px', fontWeight: 700 }}>+</span>
             </div>
           </div>
@@ -145,8 +173,8 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
           }}
         >
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '1.3rem', textTransform: 'uppercase', color: 'var(--clr-bg)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '1.4rem', textTransform: 'uppercase', color: 'var(--clr-bg)' }}>
                 {project.name}
               </h3>
               <button
@@ -159,14 +187,14 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
                   fontFamily: 'Space Grotesk, sans-serif',
                   background: 'none',
                   border: 'none',
-                  cursor: 'none',
+                  cursor: 'pointer',
                 }}
               >
                 ✕ Flip back
               </button>
             </div>
 
-            <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '0.82rem', color: '#ccc', lineHeight: 1.6, marginBottom: '14px' }}>
+            <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '0.8rem', color: '#ccc', lineHeight: 1.5, marginBottom: '12px' }}>
               {project.description}
             </p>
 
@@ -189,17 +217,75 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
-            {project.githubUrl !== '#' && (
+          {/* Action buttons: Stacked full-width (1st: Visit Project, 2nd: GitHub underneath) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '14px', width: '100%' }}>
+            {/* Top button: Visit Project or status pill */}
+            {project.liveUrl && project.liveUrl !== '#' ? (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  width: '100%',
+                  textAlign: 'center',
+                  padding: '9px 12px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  background: 'var(--clr-red)',
+                  border: '2px solid var(--clr-red)',
+                  color: '#fff',
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  textDecoration: 'none',
+                  transition: 'all 0.15s ease',
+                  boxShadow: '2px 2px 0px #000',
+                }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget as HTMLElement
+                  el.style.transform = 'translate(-1px, -1px)'
+                  el.style.boxShadow = '4px 4px 0px #000'
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget as HTMLElement
+                  el.style.transform = 'translate(0, 0)'
+                  el.style.boxShadow = '2px 2px 0px #000'
+                }}
+              >
+                Visit Project →
+              </a>
+            ) : (
+              <span
+                style={{
+                  width: '100%',
+                  textAlign: 'center',
+                  padding: '9px 12px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  border: '2px solid rgba(255, 255, 255, 0.25)',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  cursor: 'default',
+                }}
+              >
+                {project.liveStatus || 'Soon'}
+              </span>
+            )}
+
+            {/* Bottom button: GitHub Repository */}
+            {project.githubUrl && project.githubUrl !== '#' && (
               <a
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  flex: 1,
+                  width: '100%',
                   textAlign: 'center',
-                  padding: '8px',
-                  fontSize: '0.7rem',
+                  padding: '8px 12px',
+                  fontSize: '0.75rem',
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '0.08em',
@@ -207,7 +293,8 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
                   color: 'var(--clr-bg)',
                   fontFamily: 'Space Grotesk, sans-serif',
                   textDecoration: 'none',
-                  transition: 'background 0.15s, color 0.15s',
+                  transition: 'all 0.15s ease',
+                  background: 'transparent',
                 }}
                 onMouseEnter={(e) => {
                   const el = e.currentTarget as HTMLElement
@@ -220,30 +307,9 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
                   el.style.color = 'var(--clr-bg)'
                 }}
               >
-                GitHub ↗
+                GitHub Repository ↗
               </a>
             )}
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                flex: 1,
-                textAlign: 'center',
-                padding: '8px',
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                background: 'var(--clr-red)',
-                border: '2px solid var(--clr-red)',
-                color: '#fff',
-                fontFamily: 'Space Grotesk, sans-serif',
-                textDecoration: 'none',
-              }}
-            >
-              Visit Project →
-            </a>
           </div>
         </div>
       </div>
@@ -292,7 +358,7 @@ export default function TopicsSection() {
               style={{
                 fontFamily: 'Anton, sans-serif',
                 fontSize: '1.5rem',
-                cursor: 'none',
+                cursor: 'pointer',
                 color: activeTab === tab.id ? 'var(--clr-red)' : '#888',
                 background: 'transparent',
                 border: 'none',
