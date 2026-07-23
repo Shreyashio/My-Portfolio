@@ -92,6 +92,9 @@ export default function GitHubStats() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const inView = useInView(sectionRef, { once: true, margin: '-80px' })
 
+  // Cache-bust key: changes once per day so CDN/browser never serves stale images
+  const cacheBust = Math.floor(Date.now() / (1000 * 60 * 60 * 24))
+
   // Dynamic live stats fetched directly from GitHub APIs on page load
   const [stats, setStats] = useState<Stat[]>([
     { label: 'Total Commits', value: 280, suffix: '+', icon: '⌨️' },
@@ -102,7 +105,7 @@ export default function GitHubStats() {
 
   useEffect(() => {
     // 1. Fetch live GitHub User profile (Repos & Followers)
-    fetch(`https://api.github.com/users/${GITHUB_USERNAME}`)
+    fetch(`https://api.github.com/users/${GITHUB_USERNAME}`, { cache: 'no-store' })
       .then((res) => res.json())
       .then((user) => {
         if (user && user.public_repos !== undefined) {
@@ -118,7 +121,7 @@ export default function GitHubStats() {
       .catch(() => {})
 
     // 2. Fetch live GitHub Streak & Contribution stats
-    fetch(`https://streak-stats.demolab.com/?user=${GITHUB_USERNAME}&type=json`)
+    fetch(`https://streak-stats.demolab.com/?user=${GITHUB_USERNAME}&type=json&v=${cacheBust}`, { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data) {
@@ -205,7 +208,7 @@ export default function GitHubStats() {
             {/* GitHub contribution graph */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={`https://ghchart.rshah.org/A90E02/${GITHUB_USERNAME}`}
+              src={`https://ghchart.rshah.org/A90E02/${GITHUB_USERNAME}?v=${cacheBust}`}
               alt={`${GITHUB_USERNAME}'s GitHub contribution heatmap`}
               className="w-full h-auto"
               style={{ imageRendering: 'pixelated' }}
@@ -216,7 +219,7 @@ export default function GitHubStats() {
             <div className="mt-6">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={`https://streak-stats.demolab.com/?user=${GITHUB_USERNAME}&theme=transparent&hide_border=true&ring=A90E02&fire=A90E02&currStreakLabel=A90E02&sideLabels=1A1A1A&currStreakNum=1A1A1A&sideNums=1A1A1A&dates=888888&background=FFFBD4`}
+                src={`https://streak-stats.demolab.com/?user=${GITHUB_USERNAME}&theme=transparent&hide_border=true&ring=A90E02&fire=A90E02&currStreakLabel=A90E02&sideLabels=1A1A1A&currStreakNum=1A1A1A&sideNums=1A1A1A&dates=888888&background=FFFBD4&v=${cacheBust}`}
                 alt={`${GITHUB_USERNAME}'s GitHub streak stats`}
                 className="w-full h-auto"
                 loading="lazy"
