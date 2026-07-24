@@ -61,15 +61,23 @@ export default function ContactSection() {
     e.preventDefault()
     setStatus('loading')
 
-    const subject = encodeURIComponent(`Portfolio Message from ${form.name}`)
-    const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\nMessage:\n${form.message}`)
-    const mailtoUrl = `mailto:${EMAIL}?subject=${subject}&body=${body}`
-
     try {
-      // Direct window location trigger to open user's default email composer
-      window.location.href = mailtoUrl
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        console.error('Send error:', data.error)
+        setStatus('error')
+        return
+      }
+
       setStatus('success')
       setForm({ name: '', email: '', message: '' })
+      setTimeout(() => setStatus('idle'), 5000)
     } catch {
       setStatus('error')
     }
@@ -334,11 +342,11 @@ export default function ContactSection() {
                 }}
               >
                 {status === 'loading'
-                  ? 'Opening Email App...'
+                  ? 'Sending...'
                   : status === 'success'
-                  ? '✓ Email Composer Opened!'
+                  ? '✓ Message Sent!'
                   : status === 'error'
-                  ? 'Error — Try Again'
+                  ? 'Failed — Try Again'
                   : 'Send Message →'}
               </button>
 
@@ -347,7 +355,7 @@ export default function ContactSection() {
                   className="text-xs text-center font-semibold"
                   style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#22c55e' }}
                 >
-                  Message prepared! If your email app didn&apos;t open automatically, click &quot;Copy Email&quot; above to message {EMAIL}.
+                  Message sent successfully! I&apos;ll get back to you soon.
                 </p>
               )}
             </form>

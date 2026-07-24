@@ -67,9 +67,17 @@ export default function CustomCursor() {
 
     animate()
 
-    // Scale ring on hover over interactive elements
-    const onEnter = () => ring.classList.add('cursor-hover')
-    const onLeave = () => ring.classList.remove('cursor-hover')
+    // Scale ring on hover — direct style, no class needed
+    const onEnter = () => {
+      ring.style.width = '64px'
+      ring.style.height = '64px'
+      ring.style.borderColor = 'rgba(169, 14, 2, 0.9)'
+    }
+    const onLeave = () => {
+      ring.style.width = '44px'
+      ring.style.height = '44px'
+      ring.style.borderColor = 'rgba(0, 0, 0, 0.75)'
+    }
 
     const attachHover = () => {
       document
@@ -155,18 +163,7 @@ export default function CustomCursor() {
         />
       ))}
 
-      <style>{`
-        *, *::before, *::after {
-          cursor: none !important;
-        }
 
-        /* Ring expands on hover */
-        div[aria-hidden="true"][style*="border: 2px"].cursor-hover {
-          width: 64px !important;
-          height: 64px !important;
-          border-color: rgba(169, 14, 2, 0.9) !important;
-        }
-      `}</style>
     </>
   )
 }
