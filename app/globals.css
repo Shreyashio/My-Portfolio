@@ -58,26 +58,7 @@ body {
   background-size: 200px 200px;
 }
 
-/* Custom cursor */
-.cursor {
-  position: fixed;
-  width: 12px;
-  height: 12px;
-  background: var(--clr-red);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 10000;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease, background 0.2s ease;
-  mix-blend-mode: multiply;
-}
 
-.cursor.cursor-hover {
-  width: 32px;
-  height: 32px;
-  background: var(--clr-red);
-  opacity: 0.6;
-}
 
 /* Brutalist utility classes */
 .brutalist-border {
