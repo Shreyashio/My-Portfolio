@@ -28,6 +28,11 @@ body {
   overflow-x: hidden;
 }
 
+*, *::before, *::after {
+  cursor: none !important;
+}
+
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
