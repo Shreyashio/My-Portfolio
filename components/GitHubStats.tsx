@@ -88,6 +88,14 @@ function StatCell({ stat, delay }: { stat: Stat; delay: number }) {
   )
 }
 
+interface GitHubApiData {
+  totalCommits: number
+  repositories: number
+  followers: number
+  currentStreak: number
+  longestStreak: number
+}
+
 export default function GitHubStats() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const inView = useInView(sectionRef, { once: true, margin: '-80px' })
@@ -95,53 +103,35 @@ export default function GitHubStats() {
   // Cache-bust key: changes once per day so CDN/browser never serves stale images
   const cacheBust = Math.floor(Date.now() / (1000 * 60 * 60 * 24))
 
-  // Dynamic live stats fetched directly from GitHub APIs on page load
+  const [apiData, setApiData] = useState<GitHubApiData | null>(null)
+  const [statsError, setStatsError] = useState(false)
+
+  // Dynamic live stats from our own API route (uses GitHub GraphQL + PAT)
   const [stats, setStats] = useState<Stat[]>([
     { label: 'Total Commits', value: 280, suffix: '+', icon: '⌨️' },
-    { label: 'Repositories', value: 24, suffix: '', icon: '📁' },
+    { label: 'Repositories', value: 27, suffix: '', icon: '📁' },
     { label: 'Current Streak', value: 12, suffix: ' days', icon: '🔥' },
     { label: 'Followers', value: 9, suffix: '', icon: '👥' },
   ])
 
   useEffect(() => {
-    // 1. Fetch live GitHub User profile (Repos & Followers)
-    fetch(`https://api.github.com/users/${GITHUB_USERNAME}`, { cache: 'no-store' })
-      .then((res) => res.json())
-      .then((user) => {
-        if (user && user.public_repos !== undefined) {
-          setStats((prev) =>
-            prev.map((s) => {
-              if (s.label === 'Repositories') return { ...s, value: user.public_repos }
-              if (s.label === 'Followers') return { ...s, value: user.followers }
-              return s
-            })
-          )
-        }
+    fetch('/api/github-stats')
+      .then((res) => {
+        if (!res.ok) throw new Error('API error')
+        return res.json()
       })
-      .catch(() => {})
-
-    // 2. Fetch live GitHub Streak & Contribution stats
-    fetch(`https://streak-stats.demolab.com/?user=${GITHUB_USERNAME}&type=json&v=${cacheBust}`, { cache: 'no-store' })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data) {
-          const currentStreak = data.currentStreak?.length
-          const totalContributions = data.totalContributions?.count
-
-          setStats((prev) =>
-            prev.map((s) => {
-              if (s.label === 'Current Streak' && currentStreak !== undefined) {
-                return { ...s, value: currentStreak }
-              }
-              if (s.label === 'Total Commits' && totalContributions !== undefined) {
-                return { ...s, value: totalContributions, suffix: '+' }
-              }
-              return s
-            })
-          )
-        }
+      .then((data: GitHubApiData) => {
+        setApiData(data)
+        setStats([
+          { label: 'Total Commits', value: data.totalCommits, suffix: '+', icon: '⌨️' },
+          { label: 'Repositories', value: data.repositories, suffix: '', icon: '📁' },
+          { label: 'Current Streak', value: data.currentStreak, suffix: ' days', icon: '🔥' },
+          { label: 'Followers', value: data.followers, suffix: '', icon: '👥' },
+        ])
       })
-      .catch(() => {})
+      .catch(() => {
+        setStatsError(true)
+      })
   }, [])
 
   return (
@@ -215,15 +205,80 @@ export default function GitHubStats() {
               loading="lazy"
             />
 
-            {/* Live Streak stats embed */}
-            <div className="mt-6">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`https://streak-stats.demolab.com/?user=${GITHUB_USERNAME}&theme=transparent&hide_border=true&ring=A90E02&fire=A90E02&currStreakLabel=A90E02&sideLabels=1A1A1A&currStreakNum=1A1A1A&sideNums=1A1A1A&dates=888888&background=FFFBD4&v=${cacheBust}`}
-                alt={`${GITHUB_USERNAME}'s GitHub streak stats`}
-                className="w-full h-auto"
-                loading="lazy"
-              />
+            {/* Live Streak stats — brutalist cards, no third-party dependency */}
+            <div className="mt-6 grid grid-cols-3 gap-0" style={{ border: '3px solid var(--clr-dark)' }}>
+              {statsError ? (
+                <div
+                  className="col-span-3 py-6 text-center text-sm"
+                  style={{ color: '#888', fontFamily: 'Space Grotesk, sans-serif' }}
+                >
+                  Could not load live streak data.
+                </div>
+              ) : (
+                [
+                  { label: 'Current Streak', icon: '🔥', value: apiData ? apiData.currentStreak : null, suffix: ' days' },
+                  { label: 'Longest Streak', icon: '⚡', value: apiData ? apiData.longestStreak : null, suffix: ' days' },
+                  { label: 'Total Contributions', icon: '📊', value: apiData ? apiData.totalCommits : null, suffix: '+' },
+                ].map((item, idx) => (
+                  <div
+                    key={item.label}
+                    className="flex flex-col items-center justify-center py-6 px-3 relative group cursor-default"
+                    style={{
+                      borderRight: idx < 2 ? '3px solid var(--clr-dark)' : 'none',
+                      background: 'var(--clr-bg)',
+                      transition: 'background 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'var(--clr-dark)'
+                      const els = (e.currentTarget as HTMLElement).querySelectorAll('[data-val]')
+                      els.forEach((el) => ((el as HTMLElement).style.color = 'var(--clr-bg)'))
+                      const lbl = (e.currentTarget as HTMLElement).querySelector('[data-lbl]')
+                      if (lbl) (lbl as HTMLElement).style.color = '#aaa'
+                      const ico = (e.currentTarget as HTMLElement).querySelector('[data-ico]')
+                      if (ico) (ico as HTMLElement).style.filter = 'grayscale(0) brightness(1.3)'
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'var(--clr-bg)'
+                      const els = (e.currentTarget as HTMLElement).querySelectorAll('[data-val]')
+                      els.forEach((el) => ((el as HTMLElement).style.color = 'var(--clr-red)'))
+                      const lbl = (e.currentTarget as HTMLElement).querySelector('[data-lbl]')
+                      if (lbl) (lbl as HTMLElement).style.color = '#666'
+                      const ico = (e.currentTarget as HTMLElement).querySelector('[data-ico]')
+                      if (ico) (ico as HTMLElement).style.filter = 'none'
+                    }}
+                  >
+                    <span data-ico className="text-2xl mb-3" style={{ transition: 'filter 0.2s' }}>
+                      {item.icon}
+                    </span>
+                    <div
+                      data-val
+                      className="text-4xl font-bold leading-none"
+                      style={{
+                        fontFamily: 'Anton, sans-serif',
+                        color: 'var(--clr-red)',
+                        transition: 'color 0.2s',
+                        minHeight: '2.5rem',
+                        letterSpacing: '-0.02em',
+                      }}
+                    >
+                      {item.value === null ? (
+                        <span className="inline-block w-16 h-8 rounded animate-pulse" style={{ background: '#e0e0c8' }} />
+                      ) : (
+                        <>
+                          <CountUpNumber target={item.value} suffix={item.suffix} />
+                        </>
+                      )}
+                    </div>
+                    <div
+                      data-lbl
+                      className="text-[10px] uppercase tracking-widest mt-2 text-center"
+                      style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#666', transition: 'color 0.2s' }}
+                    >
+                      {item.label}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </motion.div>
 
