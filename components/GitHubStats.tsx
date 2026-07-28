@@ -304,8 +304,8 @@ export default function GitHubStats() {
 
             {/* ── Streak summary strip ───────────────────────────────── */}
             <div
-              className="grid grid-cols-3 divide-x"
-              style={{ borderTop: '3px solid var(--clr-dark)', divideColor: 'var(--clr-dark)' }}
+              className="grid grid-cols-3"
+              style={{ borderTop: '3px solid var(--clr-dark)' }}
             >
               {[
                 { label: 'Current Streak', value: apiData?.currentStreak ?? null, suffix: ' days', Icon: Flame },
